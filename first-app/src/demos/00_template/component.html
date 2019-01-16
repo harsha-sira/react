@@ -13,9 +13,19 @@
     <div id="container"></div>
 
     <script type="text/babel">
+        
+        function formatName(user) {
+            return user.firstName + "@" + user.lastName ;
+        }
+        const user = {
+            firstName: 'harsha',
+            lastName: 'Sandamal'
+        };
+        const element = (<h2>Name: {formatName(user)}</h2>);
+
         var BuckysComponent = React.createClass({
             render: function() {
-                return (<h2>This is a simple component</h2>);
+                return (element);
             }
         });
         ReactDOM.render(<BuckysComponent />, document.getElementById('container'));
