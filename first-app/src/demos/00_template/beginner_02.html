@@ -14,6 +14,31 @@
 
 <script type="text/babel">
 
+    const Checkbox = React.createClass({
+
+            getInitialState: function () {
+                return {checked: true};
+            },
+            handleChecked: function () {
+                this.setState({checked: !this.state.checked});
+            },
+            render: function () {
+                var msg = "";
+                if (this.state.checked) {
+                    msg = 'Checked';
+                } else {
+                    msg = 'Unchecked';
+                }
+                return (
+                    <div>
+                        <input type="checkbox" onChange={this.handleChecked} defaultChecked={this.state.checked}/>
+                        <h3> Checkbox is {msg}</h3>
+                    </div>
+                );
+            }
+        }
+    );
+
     const VideoComponent = React.createClass({
         render: function () {
             return (
@@ -26,13 +51,25 @@
     });
 
     const Comment = React.createClass({
+
+        getInitialState: function () {
+            return ({editing: false});
+        },
         edit: function () {
+            this.setState({editing: true});
             console.log('Editing ' + this.props.title);
         },
         delete: function () {
             console.log('deleting ' + this.props.title);
+            this.props.delete(this.props.index);
         },
-        render: function () {
+        save: function () {
+            var val = this.refs.newText.value;
+            this.setState({editing: false});
+            this.props.update(val, this.props.index);
+            console.log('New comment ' + val);
+        },
+        renderNormal: function () {
             return (
                 <div className="commentContainer">
                     <div className="commentText">{this.props.children}</div>
@@ -40,19 +77,73 @@
                     <button className="button-danger" onClick={this.delete}>Delete</button>
                 </div>
             );
+        },
+        renderForm: function () {
+            return (
+                <div className="commentContainer">
+                    <textarea ref="newText" defaultValue={this.props.children}/>
+                    <button className="button-success" onClick={this.save}>Save</button>
+                </div>
+            );
+        },
+        render: function () {
+            if (this.state.editing) {
+                return this.renderForm();
+            } else {
+                return this.renderNormal();
+            }
         }
     });
 
-    ReactDOM.render(
-        <div id="board">
-            <VideoComponent title="Jonny English" rating="5"/>
-            <Comment title="Jonny English" >This is a action / comody movie</Comment>
-            <VideoComponent title="Bumble Bee" rating="4.1"/>
-            <Comment title="Bumble Bee">This is a boring movie</Comment>
-            <VideoComponent title="Nun" rating="3"/>
-            <Comment title="Nun">This is a good movie</Comment>
-        </div>
-        , document.getElementById('video'));
+    const Board = React.createClass({
+        getInitialState: function () {
+            return {
+                comments: []
+            }
+        },
+        eachComment: function (text, i) {
+            return (
+                <Comment key={i} index={i} update={this.updateComment} delete={this.removeComment}>{text}</Comment>);
+        },
+        removeComment: function (i) {
+            console.log('remove comment ' + i);
+            var arr = this.state.comments;
+            arr.splice(i, 1);
+            this.setState({comments: arr});
+
+        },
+        updateComment: function (newText, i) {
+            console.log('update comment ');
+            var arr = this.state.comments;
+            arr[i] = newText;
+            this.setState({comments: arr});
+
+        },
+        add: function (text) {
+            var arr = this.state.comments;
+            arr.push(text);
+            this.setState({comments: arr});
+        },
+        render: function () {
+            return (
+
+                <div className="board">
+                    <Checkbox/>
+                    <VideoComponent title="Jonny English" rating="5"/>
+                    <VideoComponent title="Nun" rating="3"/>
+                    <VideoComponent title="Bumble Bee" rating="4.1"/>
+                    <button className="button-info-light" onClick={this.add.bind(null, 'default text')}>Add Comments
+                    </button>
+
+                    {
+                        this.state.comments.map(this.eachComment)
+                    }
+                </div>
+            );
+        }
+    });
+
+    ReactDOM.render(<Board/>, document.getElementById('video'));
 
 </script>
 
