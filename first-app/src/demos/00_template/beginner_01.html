@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>React Test</title>
+    <script src="../../js/react.min.js"></script>
+    <script src="../../js/react-dom.min.js"></script>
+    <script src="../../js/browser.min.js"></script>
+</head>
+<body>
+
+<div id="example"></div>
+<div id="component"></div>
+
+<script type="text/babel">
+    ReactDOM.render(<h1> Hi Harsha ! </h1>, document.getElementById('example'));
+
+    /*
+       This is a component
+     */
+    const Component = React.createClass({
+        render: function () {
+            return (
+                <div>
+                    <h3> This is a component </h3>
+                    <p> THis is a paragraph using one div to return both header and paragraphs</p>
+                </div>);
+        }
+    });
+    ReactDOM.render(
+        <div>
+            <Component/>
+            <Component/>
+            <Component/>
+        </div>
+        , document.getElementById('component'))
+</script>
+</body>
+</html>

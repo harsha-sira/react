@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>React Test 02</title>
+    <link rel="stylesheet" type="text/css" href="../../css/main.css">
+    <script src="../../js/react.min.js"></script>
+    <script src="../../js/react-dom.min.js"></script>
+    <script src="../../js/browser.min.js"></script>
+</head>
+<body>
+
+<div id="video"></div>
+
+<script type="text/babel">
+
+    const VideoComponent = React.createClass({
+        render: function () {
+            return (
+                <div>
+                    <h2>Movie Name: {this.props.title} </h2>
+                    <h3>Rating : {this.props.rating}</h3>
+                </div>
+            );
+        }
+    });
+
+    const Comment = React.createClass({
+        edit: function () {
+            console.log('Editing ' + this.props.title);
+        },
+        delete: function () {
+            console.log('deleting ' + this.props.title);
+        },
+        render: function () {
+            return (
+                <div className="commentContainer">
+                    <div className="commentText">{this.props.children}</div>
+                    <button className="button-primary" onClick={this.edit}>Edit</button>
+                    <button className="button-danger" onClick={this.delete}>Delete</button>
+                </div>
+            );
+        }
+    });
+
+    ReactDOM.render(
+        <div id="board">
+            <VideoComponent title="Jonny English" rating="5"/>
+            <Comment title="Jonny English" >This is a action / comody movie</Comment>
+            <VideoComponent title="Bumble Bee" rating="4.1"/>
+            <Comment title="Bumble Bee">This is a boring movie</Comment>
+            <VideoComponent title="Nun" rating="3"/>
+            <Comment title="Nun">This is a good movie</Comment>
+        </div>
+        , document.getElementById('video'));
+
+</script>
+
+</body>
+</html>
