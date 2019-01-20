@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>React Test 02</title>
+    <link rel="stylesheet" type="text/css" href="../../css/main.css">
+    <script src="../../js/react.min.js"></script>
+    <script src="../../js/react-dom.min.js"></script>
+    <script src="../../js/browser.min.js"></script>
+</head>
+<body>
+
+<div id="video"></div>
+
+<script type="text/babel">
+
+    const Comment = React.createClass({
+
+        getInitialState: function () {
+            return ({editing: false});
+        },
+        edit: function () {
+            this.setState({editing: true});
+            console.log('Editing ' + this.props.title);
+        },
+        delete: function () {
+            console.log('deleting ' + this.props.title);
+            this.props.delete(this.props.index);
+        },
+        save: function () {
+            var val = this.refs.newText.value;
+            this.setState({editing: false});
+            this.props.update(val, this.refs.MovieName.value, this.refs.MovieRating.value, this.props.index);
+            console.log('New comment ' + val);
+        },
+        renderNormal: function () {
+            return (
+                <div className="commentContainer">
+                    <div>
+                        <div>
+                            <h3>Movie Name: {this.props.name} </h3>
+                            <h4>Rating : {this.props.rating}</h4>
+                        </div>
+                    </div>
+                    <div>
+                        <div className="commentText">{this.props.children}</div>
+                        <button className="button-primary" onClick={this.edit}>Edit</button>
+                        <button className="button-danger" onClick={this.delete}>Delete</button>
+                    </div>
+                </div>
+            );
+        },
+        renderForm: function () {
+            return (
+                <div className="commentContainer">
+                    <div>
+                        <div>
+                            <input type="text" ref="MovieName" defaultValue={this.props.name}/>
+                            <input type="text" ref="MovieRating" defaultValue={this.props.rating}/>
+                        </div>
+                    </div>
+                    <div>
+                        <textarea ref="newText" defaultValue={this.props.children}/>
+                        <br/>
+                        <button className="button-success" onClick={this.save}>Save</button>
+                    </div>
+                </div>
+            );
+        },
+        render: function () {
+            if (this.state.editing) {
+                return this.renderForm();
+            } else {
+                return this.renderNormal();
+            }
+        }
+    });
+
+    const Board = React.createClass({
+        getInitialState: function () {
+            return {
+                comments: [], checked: true, Titles: [], Ratings: []
+            }
+        },
+        handleChecked: function () {
+            this.setState({checked: !this.state.checked});
+        },
+        eachComment: function (text, i) {
+            return (
+                <Comment key={i} index={i} name={this.state.Titles[i]} rating={this.state.Ratings[i]}
+                         update={this.updateComment} delete={this.removeComment}>{text}</Comment>);
+        },
+        getName: function (i) {
+            return (this.props.Titles[i]);
+        },
+        getRating: function (i) {
+            return (this.props.Ratings[i]);
+        },
+        removeComment: function (i) {
+            console.log('remove comment ' + i);
+            var arr = this.state.comments;
+            arr.splice(i, 1);
+            this.setState({comments: arr});
+
+        },
+        updateComment: function (newText, newTitle, newRating, i) {
+            console.log('update comment ');
+            var arr = this.state.comments;
+            arr[i] = newText;
+            this.setState({comments: arr});
+
+            var arr1 = this.state.Titles;
+            arr1[i] = newTitle;
+            this.setState({Titles: arr1});
+
+            var arr2 = this.state.Ratings;
+            arr2[i] = newRating;
+            this.setState({Ratings: arr2});
+
+        },
+        add: function (text) {
+            var arr = this.state.comments;
+            arr.push(text);
+            this.setState({comments: arr});
+
+        },
+        bodyFull: function (msg) {
+            return (
+                <div className="board">
+                    <div>
+                        <div>
+                            <input type="checkbox" onChange={this.handleChecked} defaultChecked={this.state.checked}/>
+                            <h3> Checkbox is {msg}</h3>
+                        </div>
+                    </div>
+                    <div>
+
+                        <button className="button-info-light" onClick={this.add.bind(null, 'default text')}>Add Entry
+                        </button>
+                        {
+                            this.state.comments.map(this.eachComment)
+                        }
+                    </div>
+                </div>
+
+            );
+        },
+        bodyHide: function (msg) {
+            return (
+                <div className="board">
+                    <div>
+                        <div>
+                            <input type="checkbox" onChange={this.handleChecked} defaultChecked={this.state.checked}/>
+                            <h3> Checkbox is {msg}</h3>
+                        </div>
+                    </div>
+                </div>
+
+            );
+        },
+        render: function () {
+            var msg = "";
+            if (this.state.checked) {
+                msg = 'Checked';
+                return this.bodyFull(msg);
+            } else {
+                msg = 'Unchecked';
+                return this.bodyHide(msg);
+            }
+        }
+    });
+
+    ReactDOM.render(<Board/>, document.getElementById('video'));
+
+</script>
+
+</body>
+</html>
